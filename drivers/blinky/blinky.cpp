@@ -348,7 +348,7 @@ namespace pimoroni {
             uint8_t b = (col & 0x0000ff) >>  0;
             p++;
 
-            set_pixel(x, y, r, g, b);
+            set_pixel(x, y, r);
           }
         }
       }
@@ -362,7 +362,7 @@ namespace pimoroni {
             uint8_t b = (col & 0b0000000000011111) << 3;
             p++;
 
-            set_pixel(x, y, r, g, b);
+            set_pixel(x, y, r);
           }
         }
       }
@@ -379,7 +379,7 @@ namespace pimoroni {
             uint8_t g = (col & 0x00ff00) >>  8;
             uint8_t b = (col & 0x0000ff) >>  0;
 
-            set_pixel(x, y, r, g, b);
+            set_pixel(x, y, r);
             offset++;
             p++;
           }
