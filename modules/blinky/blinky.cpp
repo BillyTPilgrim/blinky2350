@@ -1,4 +1,4 @@
-#include "libraries/blinky/blinky.hpp"
+#include "drivers/blinky/blinky.hpp"
 #include "libraries/pico_graphics/pico_graphics.hpp"
 #include "micropython/modules/util.hpp"
 #include <cstdio>
