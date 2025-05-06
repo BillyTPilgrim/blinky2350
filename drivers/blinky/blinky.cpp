@@ -32,7 +32,7 @@
 //   for each bcd frame:
 //            0: 00111111                           // row pixel count (minus one)
 //            1: xxxxrrrr                           // row select bits
-//      2  - 65: xxxxxbgr, xxxxxbgr, xxxxxbgr, ...  // pixel data
+//      2  - 27: xxxxxxxv, xxxxxxxv, xxxxxxxv, ...  // pixel data
 //      66 - 67: xxxxxxxx, xxxxxxxx,                // dummy bytes to dword align
 //      68 - 71: tttttttt, tttttttt, tttttttt       // bcd tick count (0-65536)
 //
@@ -71,7 +71,7 @@ namespace pimoroni {
 
     // Clock out data to turn off the row drivers
     gpio_put(ROW_DATA, false);
-    for(int i = 0; i < 26; i++) {
+    for(uint32_t i = 0; i < ROW_COUNT; i++) {
       sleep_us(10);
       gpio_put(ROW_DATA_CLOCK, true);
       sleep_us(10);
@@ -96,30 +96,30 @@ namespace pimoroni {
                 
     // for each row:
     //   for each bcd frame:
-    //            0: 00011111                           // row pixel count (minus one)
-    //      1  - 16: xxxxxbgr, xxxxxbgr, xxxxxbgr, ...  // pixel data
-    //      17 - 19: xxxxxxxx, xxxxxxxx, xxxxxxxx       // dummy bytes to dword align
-    //           20: xxxrrrrr                           // row select bits
-    //      21 - 23: tttttttt, tttttttt, tttttttt       // bcd tick count (0-65536)
+    //            0: 00000001                                     // row is first
+    //            1: 00011111                                     // row pixel count (minus one)
+    //      2  - 40: xxxxxxxv, xxxxxxxv, xxxxxxxv, ...            // pixel data (14 bit bcd)
+    //      41 - 43: xxxxxxxx, xxxxxxxx, xxxxxxxx                 // dummy bytes to dword align
+    //      44 - 47: tttttttt, tttttttt, tttttttt, tttttttt       // bcd tick count (0-65536)
     //
     //  .. and back to the start
 
 
     // initialise the bcd timing values and row selects in the bitstream
-    for(uint8_t row = 0; row < 26; row++) {
+    for(uint8_t row = 0; row < ROW_COUNT; row++) {
       for(uint8_t frame = 0; frame < BCD_FRAME_COUNT; frame++) {
         // find the offset of this row and frame in the bitstream
-        uint8_t *p = &bitstream[row * ROW_BYTES + (BCD_FRAME_BYTES * frame)];
+        uint8_t *p = &bitstream[(row * ROW_BYTES) + (BCD_FRAME_BYTES * frame)];
 
-        p[ 0] = 16 - 1;               // row pixel count
-        p[ 1] = 16 - 1;                  // row select
+        p[ 0] = row == 0;                       // row is first
+        p[ 1] = 39 - 1;                  // row pixel count
 
         // set the number of bcd ticks for this frame
         uint32_t bcd_ticks = (1 << frame);
-        p[20] = (bcd_ticks &       0xff) >>  0;
-        p[21] = (bcd_ticks &     0xff00) >>  8;
-        p[22] = (bcd_ticks &   0xff0000) >> 16;
-        p[23] = (bcd_ticks & 0xff000000) >> 24;
+        p[44] = (bcd_ticks &       0xff) >>  0;
+        p[45] = (bcd_ticks &     0xff00) >>  8;
+        p[46] = (bcd_ticks &   0xff0000) >> 16;
+        p[47] = (bcd_ticks & 0xff000000) >> 24;
       }
     }
 
@@ -137,7 +137,7 @@ namespace pimoroni {
 
     // Clock out data to turn off the row drivers
     gpio_put(ROW_DATA, false);
-    for(int i = 0; i < 26; i++) {
+    for(uint32_t i = 0; i < ROW_COUNT; i++) {
       sleep_us(10);
       gpio_put(ROW_DATA_CLOCK, true);
       sleep_us(10);
@@ -146,7 +146,7 @@ namespace pimoroni {
 
     // Test
     gpio_put(ROW_DATA, true);
-    for(int i = 0; i < 1; i++) {
+    for(uint32_t i = 0; i < 1; i++) {
       sleep_us(10);
       gpio_put(ROW_DATA_CLOCK, true);
       sleep_us(10);
@@ -158,9 +158,9 @@ namespace pimoroni {
     uint16_t reg1 = 0b1111111111001110;
 
     // clock the register value to the first 11 driver chips
-    for(int j = 0; j < 11; j++) {
-      for(int i = 0; i < 16; i++) {
-        if(reg1 & (1U << (15 - i))) {
+    for(uint32_t j = 0; j < 3; j++) {
+      for(uint32_t i = 0; i < COL_COUNT; i++) {
+        if(reg1 & (1U << (COL_COUNT - 1 - i))) {
           gpio_put(COLUMN_DATA, true);
         }else{
           gpio_put(COLUMN_DATA, false);
@@ -173,8 +173,8 @@ namespace pimoroni {
     }
 
     // clock the last chip and latch the value
-    for(int i = 0; i < 16; i++) {
-      if(reg1 & (1U << (15 - i))) {
+    for(uint32_t i = 0; i < COL_COUNT; i++) {
+      if(reg1 & (1U << (COL_COUNT - 1 - i))) {
         gpio_put(COLUMN_DATA, true);
       }else{
         gpio_put(COLUMN_DATA, false);
@@ -331,12 +331,9 @@ namespace pimoroni {
 
     // set the appropriate bits in the separate bcd frames
     for(uint8_t frame = 0; frame < BCD_FRAME_COUNT; frame++) {
-      uint8_t *p = &bitstream[y * ROW_BYTES + (BCD_FRAME_BYTES * frame) + 2 + x];
+      uint8_t *p = &bitstream[(y * ROW_BYTES) + (BCD_FRAME_BYTES * frame) + 2 + x];
 
-      uint8_t value_bit = gamma_v & 0b1;
-
-      *p = (value_bit << 0);
-
+      *p = (uint8_t)(gamma_v & 0b1);
       gamma_v >>= 1;
     }
   }
@@ -363,8 +360,8 @@ namespace pimoroni {
       if(graphics->pen_type == PicoGraphics::PEN_RGB888) {
         uint32_t *p = (uint32_t *)graphics->frame_buffer;
 
-        for(int y = 0; y < 16; y++) {
-          for(int x = 0; x < 16; x++) {
+        for(uint8_t y = 0; y < HEIGHT; y++) {
+          for(uint8_t x = 0; x < WIDTH; x++) {
             uint32_t col = *p;
             uint8_t r = (col & 0xff0000) >> 16;
             p++;
@@ -375,8 +372,8 @@ namespace pimoroni {
       }
       else if(graphics->pen_type == PicoGraphics::PEN_RGB565) {
         uint16_t *p = (uint16_t *)graphics->frame_buffer;
-        for(int y = 0; y < 16; y++) {
-          for(int x = 0; x < 16; x++) {
+        for(uint8_t y = 0; y < HEIGHT; y++) {
+          for(uint8_t x = 0; x < WIDTH; x++) {
             uint16_t col = __builtin_bswap16(*p);
             uint8_t r = (col & 0b1111100000000000) >> 8;
             p++;
