@@ -156,10 +156,10 @@ namespace pimoroni {
 
     uint16_t reg1 = 0b1111111111001110;
 
-    // clock the register value to the first 11 driver chips
-    for(uint32_t j = 0; j < 3; j++) {
-      for(uint32_t i = 0; i < COL_COUNT; i++) {
-        if(reg1 & (1U << (COL_COUNT - 1 - i))) {
+    // clock the register value to the first 2 driver chips
+    for(uint32_t j = 0; j < 2; j++) {
+      for(uint32_t i = 0; i < 16; i++) {
+        if(reg1 & (1U << (16 - 1 - i))) {
           gpio_put(COLUMN_DATA, true);
         }else{
           gpio_put(COLUMN_DATA, false);
@@ -172,8 +172,8 @@ namespace pimoroni {
     }
 
     // clock the last chip and latch the value
-    for(uint32_t i = 0; i < COL_COUNT; i++) {
-      if(reg1 & (1U << (COL_COUNT - 1 - i))) {
+    for(uint32_t i = 0; i < 16; i++) {
+      if(reg1 & (1U << (16 - 1 - i))) {
         gpio_put(COLUMN_DATA, true);
       }else{
         gpio_put(COLUMN_DATA, false);
@@ -312,8 +312,11 @@ namespace pimoroni {
   }
 
   void Blinky::set_pixel(int x, int y, uint8_t v) {
-    x = (WIDTH - 1) - x;
-    y = (HEIGHT - 1) - y;
+    if(x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return;
+
+    // make those coordinates sane
+    //x = (WIDTH - 1) - x;
+    //y = (HEIGHT - 1) - y;
 
     v = (v * this->brightness) >> 8;
 
