@@ -315,8 +315,8 @@ namespace pimoroni {
     if(x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return;
 
     // make those coordinates sane
-    //x = (WIDTH - 1) - x;
-    //y = (HEIGHT - 1) - y;
+    x = (WIDTH - 1) - x;
+    y = (HEIGHT - 1) - y;
 
     v = (v * this->brightness) >> 8;
 
