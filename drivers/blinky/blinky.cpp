@@ -390,8 +390,8 @@ namespace pimoroni {
         graphics->frame_convert(PicoGraphics::PEN_RGB888, [this, offset](void *data, size_t length) mutable {
           uint32_t *p = (uint32_t *)data;
           for(auto i = 0u; i < length / 4; i++) {
-            int x = offset % 16;
-            int y = offset / 16;
+            int x = offset % 39;
+            int y = offset / 39;
 
             uint32_t col = *p;
             uint8_t r = (col & 0xff0000) >> 16;
