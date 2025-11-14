@@ -4,8 +4,6 @@
 // #include "../image.hpp"
 
 
-extern int PicoVector_working_buffer[];
-
 #include "brush.hpp"
 #include "shape.hpp"
 #include "font.hpp"
@@ -22,9 +20,15 @@ extern "C" {
 
   #include "py/runtime.h"
 
-  int screen_width = 39;
-  int screen_height = 26;
-  uint32_t framebuffer[39 * 26];
+  int screen_width = 160;
+  int screen_height = 120;
+  uint32_t framebuffer[160 * 120];
+
+#ifndef PICO
+  int debug_width = 300;
+  int debug_height = 360;
+  uint32_t debug_buffer[300 * 360];
+#endif
 
   mp_obj_t modpicovector___init__(void) {
   
@@ -51,6 +55,13 @@ extern "C" {
         image->image = new(m_malloc(sizeof(image_t))) image_t(framebuffer, screen_width, screen_height);
         dest[0] = MP_OBJ_FROM_PTR(image);
       }
+#ifndef PICO
+      if (attr == MP_QSTR_debug) {
+        image_obj_t *image = mp_obj_malloc_with_finaliser(image_obj_t, &type_Image);
+        image->image = new(m_malloc(sizeof(image_t))) image_t(debug_buffer, debug_width, debug_height);
+        dest[0] = MP_OBJ_FROM_PTR(image);
+      }
+#endif
     }
   }
 
