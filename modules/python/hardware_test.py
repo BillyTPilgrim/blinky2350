@@ -45,7 +45,7 @@ c = Pin.board.BUTTON_C
 home = Pin.board.BUTTON_HOME
 power = Pin.board.POWER_EN
 
-font_ignore = PixelFont.load("/system/assets/fonts/ignore.ppf")
+font_ignore = PixelFont.load("/system/assets/fonts/smart.ppf")
 screen.font = font_ignore
 
 
@@ -106,7 +106,7 @@ class Tests:
         screen.brush = BLACK
         screen.clear()
         screen.brush = WHITE
-        screen.text(str(error), 5, 0)
+        screen.text(str(error), 5, 3)
         display.update()
 
     def test_buttons(self):
