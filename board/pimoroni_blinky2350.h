@@ -9,9 +9,8 @@
 //       SHOULD ONLY CONSIST OF PREPROCESSOR DIRECTIVES
 // -----------------------------------------------------
 
-// This header may be included by other board headers as "boards/pico.h"
-
 // pico_cmake_set PICO_PLATFORM=rp2350
+// pico_cmake_set PICO_CYW43_SUPPORTED = 1
 
 #ifndef _BOARDS_PICO2_H
 #define _BOARDS_PICO2_H
@@ -45,9 +44,6 @@
 // This is wired to the RESET (Disk / Sleep / Reset / Power On)
 // button and used to determine long press status
 #define BW_RESET_SW      (14) // No pull, active high?
-
-// Moved to RM2
-// #define BW_CHARGE_STAT   (12)
 
 // I2C power for talking to RTC
 #define BW_SW_POWER_EN   (27)
@@ -83,21 +79,11 @@
 #endif
 
 // --- SPI ---
-#ifndef PICO_DEFAULT_SPI
-#define PICO_DEFAULT_SPI 0
-#endif
-#ifndef PICO_DEFAULT_SPI_SCK_PIN
-#define PICO_DEFAULT_SPI_SCK_PIN 18
-#endif
-#ifndef PICO_DEFAULT_SPI_TX_PIN
-#define PICO_DEFAULT_SPI_TX_PIN 19 // SD_CMD (+ 20, 21 and 22 for 4-bit SD)
-#endif
-#ifndef PICO_DEFAULT_SPI_RX_PIN
-#define PICO_DEFAULT_SPI_RX_PIN 16
-#endif
-#ifndef PICO_DEFAULT_SPI_CSN_PIN
-#define PICO_DEFAULT_SPI_CSN_PIN 17
-#endif
+// no PICO_DEFAULT_SPI
+// no PICO_DEFAULT_SPI_SCK_PIN
+// no PICO_DEFAULT_SPI_TX_PIN
+// no PICO_DEFAULT_SPI_RX_PIN
+// no PICO_DEFAULT_SPI_CSN_PIN
 
 // --- FLASH ---
 
@@ -112,9 +98,10 @@
 #define PICO_FLASH_SIZE_BYTES (16 * 1024 * 1024)
 #endif
 
-#ifndef CYW43_WL_GPIO_COUNT
-#define CYW43_WL_GPIO_COUNT 3
-#endif
+// --- Power ---
+
+// Drive high to force power supply into PWM mode (lower ripple on 3V3 at light loads)
+// no PICO_SMPS_MODE_PIN
 
 // The GPIO Pin used to read VBUS to determine if the device is battery powered.
 // no PICO_VBUS_PIN
@@ -122,6 +109,12 @@
 // The GPIO Pin used to monitor VSYS. Typically you would use this with ADC.
 // There is an example in adc/read_vsys in pico-examples.
 // no PICO_VSYS_PIN
+
+// --- CYW43 ---
+
+#ifndef CYW43_WL_GPIO_COUNT
+#define CYW43_WL_GPIO_COUNT 3
+#endif
 
 #ifndef PICO_RP2350_A2_SUPPORTED
 #define PICO_RP2350_A2_SUPPORTED 1
