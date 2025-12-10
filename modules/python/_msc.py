@@ -1,7 +1,6 @@
 from badgeware import screen, brushes, PixelFont, run
 import blinky
 import rp2
-import math
 
 display = blinky.Blinky()
 
@@ -10,11 +9,10 @@ rp2.enable_msc()
 background = brushes.color(0, 0, 0)
 white = brushes.color(35, 41, 37)
 
-
 try:
-        small_font = PixelFont.load("/system/assets/fonts/winds.ppf")
+    small_font = PixelFont.load("/system/assets/fonts/winds.ppf")
 except OSError:
-        small_font = None
+    small_font = None
 
 
 class DiskMode():
@@ -26,15 +24,15 @@ class DiskMode():
         screen.clear()
 
         if small_font:
-                screen.font = small_font
-                screen.brush = white
-                center_text("USB", 0)
+            screen.font = small_font
+            screen.brush = white
+            center_text("USB", 0)
 
-                screen.brush = white
-                if self.transferring:
-                        center_text("<<<", 7)
-                else:
-                        center_text("waiting", 7)
+            screen.brush = white
+            if self.transferring:
+                center_text("<<<", 7)
+            else:
+                center_text("waiting", 7)
 
 
 def center_text(text, y):
@@ -51,6 +49,7 @@ def wrap_text(text, x, y):
 
 
 disk_mode = DiskMode()
+
 
 def update():
 
