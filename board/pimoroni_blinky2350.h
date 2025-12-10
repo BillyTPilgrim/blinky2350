@@ -28,8 +28,8 @@
 // Rear white LEDs
 #define BW_LED_0         (0)
 #define BW_LED_1         (1)
-#define BW_LED_2         (3)
-#define BW_LED_3         (4)
+#define BW_LED_2         (2)
+#define BW_LED_3         (3)
 
 // PSRAM
 #define BW_PSRAM_CS      (8)
