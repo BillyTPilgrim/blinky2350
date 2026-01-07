@@ -1,13 +1,15 @@
 export TERM=${TERM:="xterm-256color"}
 
+# cache buster: 2025-10-08
+
 MICROPYTHON_FLAVOUR="pimoroni"
-MICROPYTHON_VERSION="bw-1.26.0"
+MICROPYTHON_VERSION="bw-1.27.0"
 
 PIMORONI_PICO_FLAVOUR="pimoroni"
-PIMORONI_PICO_VERSION="0a66e430514b1af3e885e7383b4c99705989e84a"
+PIMORONI_PICO_VERSION="37a1b6500f77924b2a3287009734bb24d4809bf1"
 
-PY_DECL_VERSION="v0.0.3"
-DIR2UF2_VERSION="feature/custom-fs"
+PY_DECL_VERSION="v0.0.5"
+DIR2UF2_VERSION="v0.1.0"
 FFSMAKE_VERSION="main"
 
 
@@ -152,12 +154,12 @@ function ci_cmake_build {
         CI_RELEASE_FILENAME=$BOARD
     fi
 
-    log_inform "Copying .uf2 to $(pwd)/$CI_RELEASE_FILENAME.uf2"
-    cp "$BUILD_DIR/firmware.uf2" $CI_RELEASE_FILENAME.uf2
+    log_inform "Copying -romfs.uf2 to $(pwd)/$CI_RELEASE_FILENAME.uf2"
+    cp "$BUILD_DIR/firmware-romfs.uf2" $CI_RELEASE_FILENAME.uf2
 
-    if [ -f "$BUILD_DIR/firmware-with-filesystem.uf2" ]; then
-        log_inform "Copying -with-filesystem .uf2 to $(pwd)/$CI_RELEASE_FILENAME-with-filesystem.uf2"
-        cp "$BUILD_DIR/firmware-with-filesystem.uf2" $CI_RELEASE_FILENAME-with-filesystem.uf2
+    if [ -f "$BUILD_DIR/firmware-romfs-with-filesystem.uf2" ]; then
+        log_inform "Copying romfs-with-filesystem .uf2 to $(pwd)/$CI_RELEASE_FILENAME-with-filesystem.uf2"
+        cp "$BUILD_DIR/firmware-romfs-with-filesystem.uf2" $CI_RELEASE_FILENAME-with-filesystem.uf2
     fi
 }
 

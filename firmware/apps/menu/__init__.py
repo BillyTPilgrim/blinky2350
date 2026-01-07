@@ -5,7 +5,7 @@ sys.path.insert(0, "/system/apps/menu")
 os.chdir("/system/apps/menu")
 
 import math
-from badgeware import screen, PixelFont, Image, SpriteSheet, is_dir, file_exists, shapes, brushes, io, run
+from badgeware import is_dir, file_exists, run
 from icon import Icon
 import ui
 
@@ -25,7 +25,7 @@ apps = [
 ]
 
 mona = SpriteSheet("/system/assets/mona-sprites/mona-default.png", 11, 1)
-screen.font = PixelFont.load("/system/assets/fonts/ark.ppf")
+screen.font = rom_font.ark
 # screen.antialias = Image.X2
 
 # find installed apps and create icons
@@ -38,7 +38,7 @@ for app in apps:
             x = len(icons) % 3
             y = math.floor(len(icons) / 3)
             pos = (x * 48 + 33, y * 48 + 42)
-            sprite = Image.load(f"/system/apps/{path}/icon.png")
+            sprite = image.load(f"/system/apps/{path}/icon.png")
             icons.append(Icon(pos, name, len(icons), sprite))
 
 active = 0
@@ -75,13 +75,13 @@ def update():
     if Icon.active_icon:
         label = f"{Icon.active_icon.name}"
         w, _ = screen.measure_text(label)
-        screen.brush = brushes.color(211, 250, 55)
-        screen.draw(shapes.rounded_rectangle(80 - (w / 2) - 4, 100, w + 8, 15, 4))
-        screen.brush = brushes.color(0, 0, 0, 150)
+        screen.pen = color.rgb(211, 250, 55)
+        screen.shape(shape.rounded_rectangle(80 - (w / 2) - 4, 100, w + 8, 15, 4))
+        screen.pen = color.rgb(0, 0, 0, 150)
         screen.text(label, 80 - (w / 2), 101)
 
     if alpha <= MAX_ALPHA:
-        screen.brush = brushes.color(0, 0, 0, 255 - alpha)
+        screen.pen = color.rgb(0, 0, 0, 255 - alpha)
         screen.clear()
         alpha += 30
 

@@ -2,12 +2,12 @@
 
 import sys
 import os
-from badgeware import run, io
+from badgeware import run
 import machine
 import gc
-import powman
+# import powman
 
-SKIP_CINEMATIC = powman.get_wake_reason() == powman.WAKE_WATCHDOG
+SKIP_CINEMATIC = True   # powman.get_wake_reason() == powman.WAKE_WATCHDOG
 
 running_app = None
 
@@ -48,23 +48,24 @@ del sys.modules["icon"]
 
 gc.collect()
 
-# Don't pass the b press into the app
-while io.held:
-    io.poll()
+# Stopping in Thonny can cause run(menu.update) to return None
+if app is not None:
+    # Don't pass the b press into the app
+    while io.held:
+        io.poll()
 
-machine.Pin.board.BUTTON_HOME.irq(
-    trigger=machine.Pin.IRQ_FALLING, handler=quit_to_launcher
-)
+    machine.Pin.board.BUTTON_HOME.irq(
+        trigger=machine.Pin.IRQ_FALLING, handler=quit_to_launcher
+    )
 
-sys.path.insert(0, app)
-os.chdir(app)
+    sys.path.insert(0, app)
+    os.chdir(app)
 
-running_app = __import__(app)
+    running_app = __import__(app)
 
-getattr(running_app, "init", lambda: None)()
+    getattr(running_app, "init", lambda: None)()
 
-run(running_app.update)
+    run(running_app.update)
 
-# Unreachable, in theory!
-machine.reset()
-
+    # Unreachable, in theory!
+    machine.reset()

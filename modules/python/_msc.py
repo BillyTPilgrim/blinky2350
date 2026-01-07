@@ -1,16 +1,14 @@
-from badgeware import screen, brushes, PixelFont, run
-import blinky
+from badgeware import run
 import rp2
-
-display = blinky.Blinky()
+import random
 
 rp2.enable_msc()
 
-background = brushes.color(0, 0, 0)
-white = brushes.color(35, 41, 37)
+background = color.rgb(0, 0, 0)
+white = color.rgb(35, 41, 37)
 
 try:
-    small_font = PixelFont.load("/system/assets/fonts/winds.ppf")
+    small_font = rom_font.winds
 except OSError:
     small_font = None
 
@@ -20,15 +18,15 @@ class DiskMode():
         self.transferring = False
 
     def draw(self):
-        screen.brush = background
+        screen.pen = background
         screen.clear()
 
         if small_font:
             screen.font = small_font
-            screen.brush = white
+            screen.pen = white
             center_text("USB", 0)
 
-            screen.brush = white
+            screen.pen = white
             if self.transferring:
                 center_text("<<<", 7)
             else:
@@ -52,14 +50,11 @@ disk_mode = DiskMode()
 
 
 def update():
-
     # set transfer state here
     disk_mode.transferring = rp2.is_msc_busy()
 
     # draw the ui
     disk_mode.draw()
-
-    display.update()
 
 
 run(update)

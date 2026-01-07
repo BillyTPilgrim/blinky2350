@@ -40,9 +40,9 @@
 
 static uint32_t dma_channel;
 static uint32_t dma_ctrl_channel;
-extern uint32_t framebuffer[];
 
 namespace pimoroni {
+  uint32_t __attribute__((section(".uninitialized_data"))) __attribute__ ((aligned (4))) framebuffer[Blinky::WIDTH * Blinky::HEIGHT];
 
   Blinky* Blinky::blinky = nullptr;
   PIO Blinky::bitstream_pio = pio0;

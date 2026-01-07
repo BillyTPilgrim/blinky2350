@@ -1,30 +1,29 @@
 import math
-from badgeware import brushes, shapes, io, Matrix, screen
 
 # bright icon colours
 bold = [
-    brushes.color(211, 250, 55),
-    brushes.color(48, 148, 255),
-    brushes.color(95, 237, 131),
-    brushes.color(225, 46, 251),
-    brushes.color(216, 189, 14),
-    brushes.color(255, 128, 210),
+    color.rgb(211, 250, 55),
+    color.rgb(48, 148, 255),
+    color.rgb(95, 237, 131),
+    color.rgb(225, 46, 251),
+    color.rgb(216, 189, 14),
+    color.rgb(255, 128, 210),
 ]
 
 # create faded out variants for inactive icons
 fade = 1.8
 faded = [
-    brushes.color(211 / fade, 250 / fade, 55 / fade),
-    brushes.color(48 / fade, 148 / fade, 255 / fade),
-    brushes.color(95 / fade, 237 / fade, 131 / fade),
-    brushes.color(225 / fade, 46 / fade, 251 / fade),
-    brushes.color(216 / fade, 189 / fade, 14 / fade),
-    brushes.color(255 / fade, 128 / fade, 210 / fade),
+    color.rgb(211 / fade, 250 / fade, 55 / fade),
+    color.rgb(48 / fade, 148 / fade, 255 / fade),
+    color.rgb(95 / fade, 237 / fade, 131 / fade),
+    color.rgb(225 / fade, 46 / fade, 251 / fade),
+    color.rgb(216 / fade, 189 / fade, 14 / fade),
+    color.rgb(255 / fade, 128 / fade, 210 / fade),
 ]
 
 # icon shape
-squircle = shapes.squircle(0, 0, 20, 4)
-shade_brush = brushes.color(0, 0, 0, 30)
+squircle = shape.squircle(0, 0, 20, 4)
+shade_brush = color.rgb(0, 0, 0, 30)
 
 
 class Icon:
@@ -72,32 +71,30 @@ class Icon:
                 self.spin = False
 
         # transform to the icon position
-        squircle.transform = Matrix().translate(*self.pos).scale(width, 1)
+        squircle.transform = mat3().translate(*self.pos).scale(width, 1)
 
         # draw the icon shading
-        screen.brush = shade_brush
+        screen.pen = shade_brush
         squircle.transform = squircle.transform.scale(1.1, 1.1)
-        screen.draw(squircle)
+        screen.shape(squircle)
 
         # draw the icon body
         squircle.transform = squircle.transform.scale(1 / 1.1, 1 / 1.1)
         if self.active:
-            screen.brush = bold[self.index]
+            screen.pen = bold[self.index]
         else:
-            screen.brush = faded[self.index]
+            screen.pen = faded[self.index]
         squircle.transform = squircle.transform.translate(-1, -1)
-        screen.draw(squircle)
+        screen.shape(squircle)
         squircle.transform = squircle.transform.translate(2, 2)
-        screen.brush = shade_brush
-        screen.draw(squircle)
+        screen.pen = shade_brush
+        screen.shape(squircle)
 
         # draw the icon sprite
         if sprite_width > 0:
             self.icon.alpha = 255 if self.active else 100
-            screen.scale_blit(
+            screen.blit(
                 self.icon,
-                self.pos[0] - sprite_offset - 1,
-                self.pos[1] - 13,
-                sprite_width,
-                24,
+                point(self.pos[0] - sprite_offset - 1,
+                self.pos[1] - 13)
             )
