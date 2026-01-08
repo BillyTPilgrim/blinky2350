@@ -4,15 +4,15 @@ import os
 sys.path.insert(0, "/system/apps/flappy")
 os.chdir("/system/apps/flappy")
 
-from badgeware import screen, Image, PixelFont, SpriteSheet, io, brushes, shapes, run
+from badgeware import run
 from mona import Mona
 from obstacle import Obstacle
 
-background = Image.load("assets/background.png")
-grass = Image.load("assets/grass.png")
-cloud = Image.load("assets/cloud.png")
-large_font = PixelFont.load("/system/assets/fonts/ziplock.ppf")
-small_font = PixelFont.load("/system/assets/fonts/nope.ppf")
+background = image.load("assets/background.png")
+grass = image.load("assets/grass.png")
+cloud = image.load("assets/cloud.png")
+large_font = pixel_font.load("/system/assets/fonts/ziplock.ppf")
+small_font = pixel_font.load("/system/assets/fonts/nope.ppf")
 ghost = SpriteSheet("/system/assets/mona-sprites/mona-dead.png", 7, 1).animation()
 mona = None
 
@@ -116,7 +116,7 @@ def game_over():
 
     # flash press button message
     if int(io.ticks / 500) % 2:
-        screen.brush = brushes.color(255, 255, 255)
+        screen.brush = color.rgb(255, 255, 255)
         center_text("Press A to restart", 70)
 
     if io.BUTTON_A in io.pressed:
@@ -132,8 +132,8 @@ def draw_background():
     global background_offset
 
     # clear the whole screen in a bright blue
-    screen.brush = brushes.color(73, 219, 255)
-    screen.draw(shapes.rectangle(0, 0, 160, 120))
+    screen.brush = color.rgb(73, 219, 255)
+    screen.draw(shape.rectangle(0, 0, 160, 120))
 
     # if we're on the intro screen or mona is alive then scroll the background
     if not mona or not mona.is_dead() or state == GameState.INTRO:
@@ -158,9 +158,9 @@ def draw_background():
 
 
 def shadow_text(text, x, y):
-    screen.brush = brushes.color(20, 40, 60, 100)
+    screen.brush = color.rgb(20, 40, 60, 100)
     screen.text(text, x + 1, y + 1)
-    screen.brush = brushes.color(255, 255, 255)
+    screen.brush = color.rgb(255, 255, 255)
     screen.text(text, x, y)
 
 

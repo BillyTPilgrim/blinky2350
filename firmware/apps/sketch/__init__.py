@@ -4,11 +4,11 @@ import os
 sys.path.insert(0, "/system/apps/sketch")
 os.chdir("/system/apps/sketch")
 
-from badgeware import Image, brushes, shapes, screen, io, run
+from badgeware import run
 import ui
 
 
-canvas = Image(0, 0, ui.canvas_area[2], ui.canvas_area[3])
+canvas = image(0, 0, ui.canvas_area[2], ui.canvas_area[3])
 cursor = (ui.canvas_area[2] / 2, ui.canvas_area[3] / 2)
 mona_position = (10, 76)
 mona_target = (10, 76)
@@ -47,8 +47,8 @@ def update_cursor():
 
     if not last_cursor or int(last_cursor[0]) != int(cursor[0]) or int(last_cursor[1]) != int(cursor[1]):
         # draw to the canvas at the cursor position
-        canvas.brush = brushes.color(105, 105, 105)
-        canvas.draw(shapes.rectangle(int(cursor[0]), int(cursor[1]), 1, 1))
+        canvas.brush = color.rgb(105, 105, 105)
+        canvas.draw(shape.rectangle(int(cursor[0]), int(cursor[1]), 1, 1))
     last_cursor = cursor
 
 # animate mona to her target location

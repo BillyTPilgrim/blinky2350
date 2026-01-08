@@ -4,7 +4,6 @@ import os
 sys.path.insert(0, "/system/apps/monapet")
 os.chdir("/system/apps/monapet")
 
-from badgeware import screen, brushes, SpriteSheet, shapes, clamp, io
 import random
 import math
 
@@ -63,9 +62,9 @@ class Mona:
     width, height = image.width * 2, image.height * 2
 
     # draw monas shadow
-    screen.brush = brushes.color(0, 0, 0, 20)
-    screen.draw(shapes.rectangle(x - (width / 2) + 5, y , width - 10, 2))
-    screen.draw(shapes.rectangle(x - (width / 2) + 5 + 2, y - 2, width - 10 - 4, 4))
+    screen.brush = color.rgb(0, 0, 0, 20)
+    screen.draw(shape.rectangle(x - (width / 2) + 5, y , width - 10, 2))
+    screen.draw(shape.rectangle(x - (width / 2) + 5 + 2, y - 2, width - 10 - 4, 4))
 
     # invert mona if they are walking left
     width *= self._direction

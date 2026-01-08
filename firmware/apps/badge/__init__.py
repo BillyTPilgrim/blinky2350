@@ -5,7 +5,7 @@ sys.path.insert(0, "/system/apps/badge")
 os.chdir("/system/apps/badge")
 
 
-from badgeware import io, brushes, shapes, Image, run, PixelFont, screen, Matrix, file_exists
+from badgeware import run, file_exists
 import random
 import math
 import network
@@ -15,11 +15,11 @@ import sys
 import json
 
 
-phosphor = brushes.color(211, 250, 55, 150)
-white = brushes.color(235, 245, 255)
-faded = brushes.color(235, 245, 255, 100)
-small_font = PixelFont.load("/system/assets/fonts/ark.ppf")
-large_font = PixelFont.load("/system/assets/fonts/absolute.ppf")
+phosphor = color.rgb(211, 250, 55, 150)
+white = color.rgb(235, 245, 255)
+faded = color.rgb(235, 245, 255, 100)
+small_font = pixel_font.load("/system/assets/fonts/ark.ppf")
+large_font = pixel_font.load("/system/assets/fonts/absolute.ppf")
 
 WIFI_TIMEOUT = 60
 CONTRIB_URL = "https://github.com/{user}.contribs"
@@ -148,7 +148,7 @@ def get_contrib_data(user, force_update=False):
 def get_avatar(user, force_update=False):
     message(f"Getting avatar for {user.handle}...")
     yield from async_fetch_to_disk(USER_AVATAR.format(user=user.handle), "/avatar.png", force_update)
-    user.avatar = Image.load("/avatar.png")
+    user.avatar = image.load("/avatar.png")
 
 
 def fake_number():
@@ -170,11 +170,11 @@ def placeholder_if_none(text):
 
 class User:
     levels = [
-        brushes.color(21 / 2,  27 / 2,  35 / 2),
-        brushes.color(3 / 2,  58 / 2,  22 / 2),
-        brushes.color(25 / 2, 108 / 2,  46 / 2),
-        brushes.color(46 / 2, 160 / 2,  67 / 2),
-        brushes.color(86 / 2, 211 / 2, 100 / 2),
+        color.rgb(21 / 2,  27 / 2,  35 / 2),
+        color.rgb(3 / 2,  58 / 2,  22 / 2),
+        color.rgb(25 / 2, 108 / 2,  46 / 2),
+        color.rgb(46 / 2, 160 / 2,  67 / 2),
+        color.rgb(86 / 2, 211 / 2, 100 / 2),
     ]
 
     def __init__(self):
@@ -207,7 +207,7 @@ class User:
                  ((graph_width - 160) / 2)) + ((graph_width - 160) / 2)
 
         screen.font = small_font
-        rect = shapes.rounded_rectangle(0, 0, size, size, 2)
+        rect = shape.rounded_rectangle(0, 0, size, size, 2)
         for y in range(7):
             for x in range(53):
                 if self.contribution_data:
@@ -219,7 +219,7 @@ class User:
                 if pos[0] + size < 0 or pos[0] > 160:
                     # skip tiles that aren't in view
                     continue
-                rect.transform = Matrix().translate(*pos)
+                rect.transform = mat3().translate(*pos)
                 screen.draw(rect)
 
         # draw handle
@@ -269,11 +269,11 @@ class User:
         if not self.avatar:
             # create a spinning loading animation while we wait for the avatar to load
             screen.brush = phosphor
-            squircle = shapes.squircle(0, 0, 10, 5)
-            screen.brush = brushes.color(211, 250, 55, 50)
+            squircle = shape.squircle(0, 0, 10, 5)
+            screen.brush = color.rgb(211, 250, 55, 50)
             for i in range(4):
                 mul = math.sin(io.ticks / 1000) * 14000
-                squircle.transform = Matrix().translate(42, 75).rotate(
+                squircle.transform = mat3().translate(42, 75).rotate(
                     (io.ticks + i * mul) / 40).scale(1 + i / 1.3)
                 screen.draw(squircle)
         else:
@@ -338,8 +338,8 @@ def connection_error():
 def update():
     global connected, force_update
 
-    screen.brush = brushes.color(0, 0, 0)
-    screen.draw(shapes.rectangle(0, 0, 160, 120))
+    screen.brush = color.rgb(0, 0, 0)
+    screen.draw(shape.rectangle(0, 0, 160, 120))
 
     force_update = False
 

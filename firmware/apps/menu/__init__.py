@@ -28,7 +28,7 @@ apps = [
 
 mona = SpriteSheet("/system/assets/mona-sprites/mona-default.png", 11, 1)
 screen.font = rom_font.ark
-# screen.antialias = Image.X2
+# screen.antialias = image.X2
 
 cx, cy = int(screen.width / 2), int(screen.height / 2)
 

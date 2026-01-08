@@ -4,7 +4,7 @@ from machine import Pin, Timer, ADC
 import time
 import powman
 import gc
-from badgeware import WIDTH, HEIGHT, brushes, PixelFont, screen, rtc, display, shapes
+from badgeware import WIDTH, HEIGHT, color, pixel_font, screen, rtc, display, shape
 
 """
 
@@ -25,8 +25,8 @@ E18 - PSRAM Test Failure
 
 """
 
-WHITE = brushes.color(100, 100, 100)
-BLACK = brushes.color(0, 0, 0)
+WHITE = color.rgb(100, 100, 100)
+BLACK = color.rgb(0, 0, 0)
 
 CL = [Pin(0, Pin.OUT), Pin(1, Pin.OUT),
       Pin(2, Pin.OUT), Pin(3, Pin.OUT)]
@@ -45,7 +45,7 @@ c = Pin.board.BUTTON_C
 home = Pin.board.BUTTON_HOME
 power = Pin.board.POWER_EN
 
-font_ignore = PixelFont.load("/system/assets/fonts/smart.ppf")
+font_ignore = pixel_font.load("/system/assets/fonts/smart.ppf")
 screen.font = font_ignore
 
 
@@ -103,9 +103,9 @@ class Tests:
             raise Exception("E17") from None
 
     def display_error(self, error):
-        screen.brush = BLACK
+        screen.pen = BLACK
         screen.clear()
-        screen.brush = WHITE
+        screen.pen = WHITE
         screen.text(str(error), 5, 3)
         display.update()
 
@@ -129,13 +129,13 @@ class Tests:
     def test_psram(self):
         ram_free = round(gc.mem_free() / 1000000, 1)
 
-        if ram_free < 8.2 or not powman._test_psram_cs():
+        if ram_free < 8.2 or not powman._test_psram_cs():  # noqa: SLF001
             raise Exception("E18")
 
     def clear(self):
-        screen.brush = BLACK
+        screen.pen = BLACK
         screen.clear()
-        screen.brush = WHITE
+        screen.pen = WHITE
 
     def test_display(self):
 
@@ -297,16 +297,16 @@ class Tests:
 
     def draw(self):
         # Clear screen and display title
-        screen.brush = BLACK
+        screen.pen = BLACK
         screen.clear()
-        screen.brush = WHITE
+        screen.pen = WHITE
 
         # Draw button presses
         for button in sorted(self.buttons):
             pressed = self.buttons[button][0]
             if not pressed:
                 x, y = self.buttons[button][1]
-                screen.draw(shapes.rectangle(x, y, 7, 7))
+                screen.shape(shape.rectangle(x, y, 7, 7))
         display.update()
 
 

@@ -131,16 +131,11 @@ def clamp(v, vmin, vmax):
 
 
 def rnd(v1, v2=None):
-    if v2:
-      return random.randint(v1, v2)
-    else:
-      return random.randint(0, v1)
+    return random.randint(v1, v2) if v2 is not None else random.randint(0, v1)
+
 
 def frnd(v1, v2=None):
-    if v2:
-      return random.uniform(v1, v2)
-    else:
-      return random.uniform(0, v1)
+    return random.uniform(v1, v2) if v2 is not None else random.uniform(0, v1)
 
 
 def file_exists(path):
@@ -279,18 +274,6 @@ def sample_adc_u16(adc, samples=1):
     for _ in range(samples):
         val.append(adc.read_u16())
     return sum(val) / len(val)
-
-
-def get_battery_level():
-    # Use the battery voltage to estimate the remaining percentage
-
-    # Get the average reading over 20 samples from our VBAT and VREF
-    voltage = sample_adc_u16(VBAT_SENSE, 10) * conversion_factor * 2
-    vref = sample_adc_u16(SENSE_1V1, 10) * conversion_factor
-    voltage = voltage / vref * 1.1
-
-    # Return the battery level as a percentage
-    return min(100, max(0, round(123 - (123 / pow((1 + pow((voltage / 3.2), 80)), 0.165)))))
 
 
 def get_battery_level():
@@ -470,8 +453,8 @@ class ROMFonts:
     def __getattr__(self, key):
         try:
             return pixel_font.load(f"/rom/fonts/{key}.ppf")
-        except OSError:
-            raise AttributeError(f"Font {key} not found!")
+        except OSError as e:
+            raise AttributeError(f"Font {key} not found!") from e
 
     def __dir__(self):
         return [f[:-4] for f in os.listdir("/rom/fonts") if f.endswith(".ppf")]
@@ -516,7 +499,7 @@ LORES = 0
 
 conversion_factor = 3.3 / 65536
 
-setattr(builtins, "screen", image(display.WIDTH, display.HEIGHT, memoryview(display)))
+setattr(builtins, "screen", image(display.WIDTH, display.HEIGHT, memoryview(display)))  # noqa: B010
 screen.font = DEFAULT_FONT
 screen.pen = BG
 picovector.default_target = screen
@@ -524,12 +507,12 @@ picovector.default_target = screen
 
 # Build in some badgeware helpers, so we don't have to "bw.lores" etc
 # note HIRES and LORES and mode are currently unused for Blinky
-for k in ("mode", "HIRES", "LORES", "SpriteSheet", "load_font", "rom_font"):
-    setattr(builtins, k, locals()[k])
+for k in ("mode", "HIRES", "LORES", "SpriteSheet", "load_font", "rom_font", "clamp", "rnd", "frnd"):
+    setattr(builtins, k, locals()[k])  # noqa: B010
 
 
 # Finally, build in badgeware as "bw" for less frequently used things
-setattr(builtins, "bw", sys.modules["badgeware"])
+setattr(builtins, "bw", sys.modules["badgeware"])  # noqa: B010
 
 
 if __name__ == "__main__":
