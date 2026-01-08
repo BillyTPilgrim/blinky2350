@@ -14,6 +14,8 @@ import builtins
 
 import picovector
 
+display = blinky.Blinky()
+
 _CASE_LIGHTS = [machine.PWM(machine.Pin.board.CL0), machine.PWM(machine.Pin.board.CL1),
                 machine.PWM(machine.Pin.board.CL2), machine.PWM(machine.Pin.board.CL3)]
 
@@ -50,6 +52,10 @@ def get_case_led(led=None):
         raise ValueError("LED out of range!")
 
     return _CASE_LIGHTS[led].duty_u16() / 65535
+
+
+def set_brightness(value):
+    display.set_brightness(value)
 
 
 def get_light():
@@ -482,8 +488,6 @@ if time.localtime()[0] >= 2025:
 elif rtc.datetime()[0] >= 2025:
     rtc_to_localtime()
 
-
-display = blinky.Blinky()
 
 # Import PicoSystem module constants to builtins,
 # so they are available globally.
