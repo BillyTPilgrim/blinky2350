@@ -445,7 +445,7 @@ def message(title, text, window=None):
         error_window.text(line, 5, y)
         y += 10
 
-    display.update(screen.width == 320)
+    display.update()
     while True:
         io.poll()
         if io.pressed:
