@@ -35,7 +35,4 @@ except:  # noqa: E722
     fat.label(FS_LABEL)
     vfs.mount(fat, "/system", readonly=True)
 
-if powman.get_wake_reason() == powman.WAKE_DOUBLETAP:
-    import _msc  # noqa: F401
-
 del os, vfs, bdev, bdev_lfs, fat, lfs
