@@ -466,23 +466,31 @@ def get_exception(e):
 
 
 # Draw scrolling text into a given window
-def scroll_text(text, font=None, bg=None, fg=None, window=None, speed=25, continuous=False):
-    font = font or rom_font.sins
+def scroll_text(text, font_face=None, bg=None, fg=None, window=None, speed=25, continuous=False, font_size=None):
+    font_face = font_face or rom_font.sins
     bg = bg or color.rgb(0, 0, 0)
     fg = fg or color.rgb(128, 128, 128)
-    window = window or screen.window(0, 0, screen.width, screen.height)
-    window.font = rom_font.sins
 
-    tw, th = window.measure_text(text)
+    is_vector_font = isinstance(font_face, font)
+
+    if is_vector_font and font_size is None:
+        raise ValueError("scroll_text: vector fonts require a font_size")
+
+    window = window or screen.window(0, 0, screen.width, screen.height)
+    window.font = font_face
+
+    tw, th = window.measure_text(text, font_size) if isinstance(font_face, font) else window.measure_text(text)
+
+    if is_vector_font:
+        th = font_size
 
     scroll_distance = tw + (0 if continuous else window.width)
-    
-    t_start = None
-    
+
+    t_start = io.ticks
+
     offset = vec2(0, (window.height - th) // 2)
-    
+
     def update():
-        t_start = t_start or io.ticks
         timedelta = io.ticks - t_start
         timedelta /= 1000 / speed
         timedelta %= scroll_distance
@@ -497,11 +505,14 @@ def scroll_text(text, font=None, bg=None, fg=None, window=None, speed=25, contin
         window.clear()
         window.pen = fg
 
-        window.text(text, offset)
-        
+        if is_vector_font:
+            window.text(text, offset, font_size)
+        else:
+            window.text(text, offset)
+
         if continuous:
             window.text(text, offset + vec2(tw, 0))
-        
+
     return update
 
 
@@ -509,7 +520,7 @@ def fatal_error(title, error):
     if not isinstance(error, str):
         error = get_exception(error)
     print(f"- ERROR: {error}")
-    
+
     screen.pen = BG
     screen.clear()
 
