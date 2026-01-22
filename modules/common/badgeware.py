@@ -465,8 +465,8 @@ def get_exception(e):
     return s.read()
 
 
-# Draw scrolling text into a given window
-def scroll_text(text, font_face=None, bg=None, fg=None, window=None, speed=25, continuous=False, font_size=None):
+# Draw scrolling text into a given window or image
+def scroll_text(text, font_face=None, bg=None, fg=None, target=None, speed=25, continuous=False, font_size=None):
     font_face = font_face or rom_font.sins
     bg = bg or color.rgb(0, 0, 0)
     fg = fg or color.rgb(128, 128, 128)
@@ -476,19 +476,19 @@ def scroll_text(text, font_face=None, bg=None, fg=None, window=None, speed=25, c
     if is_vector_font and font_size is None:
         raise ValueError("scroll_text: vector fonts require a font_size")
 
-    window = window or screen.window(0, 0, screen.width, screen.height)
-    window.font = font_face
+    target = target or screen.window(0, 0, screen.width, screen.height)
+    target.font = font_face
 
-    tw, th = window.measure_text(text, font_size) if isinstance(font_face, font) else window.measure_text(text)
+    tw, th = target.measure_text(text, font_size) if isinstance(font_face, font) else target.measure_text(text)
 
     if is_vector_font:
         th = font_size
 
-    scroll_distance = tw + (0 if continuous else window.width)
+    scroll_distance = tw + (0 if continuous else target.width)
 
     t_start = io.ticks
 
-    offset = vec2(0, (window.height - th) // 2)
+    offset = vec2(0, (target.height - th) // 2)
 
     def update():
         timedelta = io.ticks - t_start
@@ -499,19 +499,18 @@ def scroll_text(text, font_face=None, bg=None, fg=None, window=None, speed=25, c
         if continuous:
             offset.x = -scroll_distance * timedelta
         else:
-            offset.x = window.width - (scroll_distance * timedelta)
+            offset.x = target.width - (scroll_distance * timedelta)
 
-        window.pen = bg
-        window.clear()
-        window.pen = fg
+        target.font = font_face
+        target.pen = bg
+        target.clear()
+        target.pen = fg
 
-        if is_vector_font:
-            window.text(text, offset, font_size)
-        else:
-            window.text(text, offset)
+        # The "font_size" argument is ignored for vector text
+        target.text(text, offset, font_size)
 
         if continuous:
-            window.text(text, offset + vec2(tw, 0))
+            target.text(text, offset + vec2(tw, 0), font_size)
 
     return update
 
