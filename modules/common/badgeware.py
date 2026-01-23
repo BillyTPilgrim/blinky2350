@@ -493,6 +493,7 @@ def scroll_text(text, font_face=None, bg=None, fg=None, target=None, speed=25, c
     def update():
         timedelta = io.ticks - t_start
         timedelta /= 1000 / speed
+        progress = timedelta / scroll_distance
         timedelta %= scroll_distance
         timedelta /= scroll_distance
 
@@ -512,6 +513,8 @@ def scroll_text(text, font_face=None, bg=None, fg=None, target=None, speed=25, c
 
         if continuous:
             target.text(text, offset + vec2(tw, 0), font_size)
+
+        return progress
 
     return update
 
