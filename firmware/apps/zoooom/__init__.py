@@ -1,12 +1,11 @@
 import sys
 import os
-
-sys.path.insert(0, "/system/apps/zoooom")
-os.chdir("/system/apps/zoooom")
-
 import math
 import random
 from badgeware import run
+
+sys.path.insert(0, "/system/apps/zoooom")
+os.chdir("/system/apps/zoooom")
 
 screen_buffer = image(160, 120)
 screen_buffer.pen = color.rgb(255, 255, 255)
@@ -52,6 +51,8 @@ game_state = GameState.INTRO
 level_segments_passed = 0
 start_screen = 0
 fade_counter = 255
+scroll = None
+scroll_window = image(screen.width, 10)
 
 
 # The level just stores the name and how much we want the walls to vary.
@@ -393,7 +394,7 @@ init_game()
 
 
 def update():
-    global game_state, z_offset, z_increment, include_obstacle, level_segments_passed, start_screen, fade_counter
+    global game_state, z_offset, z_increment, include_obstacle, level_segments_passed, start_screen, fade_counter, scroll
 
     # If we're in the intro, just cycle through the intro cutscene with any button press until
     # there's no more pages of it left, then switch the game mode to gameplay.
@@ -476,15 +477,19 @@ def update():
 
     # If we're on game over, just randomly pick one of the five images with static to display, display it and loop until the user presses any button.
     elif game_state == GameState.GAME_OVER:
+        if not scroll:
+            scroll = scroll_text(f"Score: {level_segments_passed}", font_face=rom_font.ark, target=scroll_window)
+
+        screen.clear()
         screen.blit(game_over, vec2(0, 0))
         screen.pen = color.rgb(143, 143, 143)
-        screen.font = rom_font.ark
-        w, h = screen.measure_text(str(level_segments_passed))
-        screen.text(str(level_segments_passed), vec2(18 - (w / 2), 13))
+        screen.blit(scroll_window, vec2(0, screen.height - 11))
+        scroll()
 
         if io.pressed:
             init_game()
             game_state = GameState.INTRO
+            scroll = None
 
 
 if __name__ == "__main__":
