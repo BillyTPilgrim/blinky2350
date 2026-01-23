@@ -13,7 +13,7 @@ def update():
     x = math.sin(i + io.ticks / 1000) * (screen.width / 2)
     y = math.cos(i + io.ticks / 1000) * (screen.height / 2)
 
-    pos = vec2(x + bw.rnd(-20, 20), y + bw.rnd(-20, 20))
+    pos = vec2(x + rnd(-20, 20), y + rnd(-20, 20))
 
     dr = rect(
       pos.x, pos.y, (16 * s) + 2, (12 * s) + 2

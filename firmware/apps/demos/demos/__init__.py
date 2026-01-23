@@ -7,4 +7,4 @@ for file in os.listdir(__path__):
   if not file.startswith("__"):
     demos[file] = __path__ + "/" + file
 
-setattr(sys.modules[__name__], "demos", demos)
+sys.modules[__name__].demos = demos

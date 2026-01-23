@@ -28,14 +28,14 @@ def update():
     shape.line(-0.75, -0.75, 0.75, 0.75, 0.5),
     shape.line(-0.75, -0.75, 0.75, 0.75, 0.5).stroke(stroke),
   ]
-  
+
   shape_count = len(shapes)
-  
+
   a = (io.ticks / 2000) % 1
 
   alpha_a = math.sin(a * math.pi / 2) * 255
   alpha_b = 255 - alpha_a
-  
+
   offset = int((io.ticks / 2000) % shape_count)
 
   last_shape = shapes[(offset - 1) % len(shapes)]
@@ -43,7 +43,7 @@ def update():
 
   scale = ((math.sin(io.ticks / 2000 * math.pi) + 1) * 4) + 6
   transform = mat3().translate(screen.width / 2, screen.height / 2).rotate(io.ticks / 100).scale(scale)
-  
+
   screen.pen = color.rgb(255, 255, 255, alpha_b * 0.5)
   last_shape.transform = transform
   screen.shape(last_shape)

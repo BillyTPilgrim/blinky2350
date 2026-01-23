@@ -9,7 +9,7 @@ os.chdir("/system/apps/zoooom")
 
 screen_buffer = image(160, 120)
 screen_buffer.pen = color.rgb(255, 255, 255)
-screen_buffer.clear
+screen_buffer.clear()
 
 title = image.load("assets/title.png")
 ready = image.load("assets/ready.png")
@@ -248,8 +248,7 @@ def check_collision():
         return True
     if player.lr and segment.obst in (1, 3, 5, 7, 9, 11, 13):
         return True
-    else:
-        return False
+    return False
 
 
 # Basically just a slightly long winded way of picking a texture depending on which of the sixteen combinations of filled in squares
@@ -360,7 +359,7 @@ def render_gameplay():
     for segment in segments:
         segment.refresh()
 
-    for i in range(0, len(segments) - 2):
+    for i in range(len(segments) - 2):
         inner = segments[i]
         outer = segments[i + 1]
         inner.draw()

@@ -38,9 +38,9 @@ class FallingSand:
         # Simple 2D array, used above to make a grid for our cellular automaton.
 
         grid = []
-        for i in range(cols):
+        for _ in range(cols):
             row = []
-            for j in range(rows):
+            for _ in range(rows):
                 row.append(0)
             grid.append(row)
         return grid
