@@ -204,12 +204,13 @@ def clamp(v, vmin, vmax):
 
 def rnd(v1, v2=None):
     if v2:
-      return random.randint(v1, v2)
+        return random.randint(v1, v2)
     return random.randint(0, v1)
+
 
 def frnd(v1, v2=None):
     if v2:
-      return random.uniform(v1, v2)
+        return random.uniform(v1, v2)
     return random.uniform(0, v1)
 
 
