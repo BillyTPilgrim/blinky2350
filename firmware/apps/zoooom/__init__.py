@@ -478,7 +478,7 @@ def update():
     # If we're on game over, just randomly pick one of the five images with static to display, display it and loop until the user presses any button.
     elif game_state == GameState.GAME_OVER:
         if not scroll:
-            scroll = scroll_text(f"Score: {level_segments_passed}", font_face=rom_font.ark, target=scroll_window)
+            scroll = scroll_text(f"Score: {level_segments_passed}", font_face=rom_font.ark, target=scroll_window, bg=color.black)
 
         screen.clear()
         screen.blit(game_over, vec2(0, 0))

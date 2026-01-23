@@ -17,7 +17,7 @@ set_brightness(state["brightness"])
 font_list = dir(rom_font)
 font_index = font_list.index(state["font"])
 
-scroll = scroll_text(state["text"], font_face=getattr(rom_font, state["font"]))
+scroll = scroll_text(state["text"], font_face=getattr(rom_font, state["font"]), bg=color.black)
 
 changed = False
 
@@ -45,7 +45,7 @@ def update():
 
     if changed:
         state["font"] = font_list[font_index]
-        scroll = scroll_text(state["text"], font_face=getattr(rom_font, state["font"]))
+        scroll = scroll_text(state["text"], font_face=getattr(rom_font, state["font"]), bg=color.black)
         changed = False
 
     set_brightness(state["brightness"])
