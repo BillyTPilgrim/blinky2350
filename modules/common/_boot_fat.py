@@ -2,7 +2,6 @@ import os
 import rp2
 import vfs
 import machine  # noqa: F401
-import powman
 
 
 # Try to mount the filesystem, and format the flash if it doesn't exist.
