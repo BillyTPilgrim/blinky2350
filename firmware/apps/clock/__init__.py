@@ -1,8 +1,14 @@
+# Your app's directory
+APP_DIR = "/system/apps/clock"
+
 import sys
 import os
 
-os.chdir("/system/apps/clock")
-sys.path.insert(0, "/system/apps/clock")
+# Standalone bootstrap for finding app assets
+os.chdir(APP_DIR)
+
+# Standalone bootstrap for module imports
+sys.path.insert(0, APP_DIR)
 
 from badgeware import run, State, rtc
 import time
@@ -11,7 +17,8 @@ from daylightsaving import DaylightSavingPolicy, DaylightSaving
 from usermessage import user_message
 from machine import RTC
 import math
-import network
+import wifi
+import secrets
 from fallingsand import FallingSand
 
 # enable the RTC interrupts.
@@ -37,14 +44,10 @@ class ClockState:
     UpdateTime = 3
 
 
-WIFI_TIMEOUT = 60
-WIFI_PASSWORD = None
-WIFI_SSID = None
-REGION = None
-TIMEZONE = None
-wlan = None
-connected = False
-ticks_start = None
+secrets.require("REGION", "TIMEZONE")
+
+REGION = secrets.REGION
+TIMEZONE = secrets.TIMEZONE
 
 
 # setting up default values for the first run, and loading in the state with the
@@ -471,6 +474,8 @@ def update():
 
     global state, clock_state
 
+    wifi.tick()
+
     # First we check if anything's been pressed before choosing what to display.
     if io.BUTTON_C in io.pressed:
         state["clock_style"] += 1
@@ -505,17 +510,12 @@ def update():
         if update_time(REGION, TIMEZONE):
             clock_state = ClockState.Running
         else:
-            user_message("Error!", ["Unable to get time", "from NTP server."])
+            user_message("Unable", "to get time.")
 
     elif clock_state == ClockState.ConnectWiFi:
-        if get_connection_details():
-            if wlan_start():
-                user_message("updating", "time")
-                clock_state = ClockState.UpdateTime
-            else:
-                user_message("Connect", "failed")
-        else:
-            user_message("connect", "failed")
+        user_message("Connecting", "to WiFi...")
+        if wifi.connect():
+            clock_state = ClockState.UpdateTime
 
 
 if __name__ == "__main__":
