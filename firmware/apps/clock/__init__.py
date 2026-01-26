@@ -163,63 +163,6 @@ def update_time(region, timezone):
     return True
 
 
-def _is_valid_details():
-    return all([WIFI_SSID, WIFI_PASSWORD, REGION]) and isinstance(TIMEZONE, int)
-
-
-def get_connection_details():
-    # Get WiFi details from secrets.py.
-
-    global WIFI_PASSWORD, WIFI_SSID, REGION, TIMEZONE
-
-    if _is_valid_details():
-        return True
-
-    try:
-        sys.path.insert(0, "/system")
-        from secrets import WIFI_PASSWORD, WIFI_SSID, REGION, TIMEZONE
-        sys.path.pop(0)
-    except ImportError:
-        WIFI_PASSWORD = None
-        WIFI_SSID = None
-        REGION = None
-        TIMEZONE = None
-        return False
-
-    return _is_valid_details()
-
-
-def wlan_start():
-    global wlan, ticks_start, connected, WIFI_PASSWORD, WIFI_SSID
-
-    if ticks_start is None:
-        ticks_start = io.ticks
-
-    if connected:
-        return True
-
-    if wlan is None:
-        wlan = network.WLAN(network.STA_IF)
-        wlan.active(True)
-
-        if wlan.isconnected():
-            return True
-
-        wlan.connect(WIFI_SSID, WIFI_PASSWORD)
-
-        print("Connecting to WiFi...")
-
-    connected = wlan.isconnected()
-
-    if io.ticks - ticks_start < WIFI_TIMEOUT * 1000:
-        if connected:
-            return True
-    elif not connected:
-        return False
-
-    return True
-
-
 def display_time():
     # Chooses which clock face to show based on the state["clock_style"] global.
 
