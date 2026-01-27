@@ -542,6 +542,8 @@ def fatal_error(title, error):
     while io.pressed:
         io.poll()
 
+    machine.reset()
+
 
 def load_font(font_file):
     search_paths = ("/rom/fonts", "/system/assets/fonts", "/fonts", "/assets", "")
