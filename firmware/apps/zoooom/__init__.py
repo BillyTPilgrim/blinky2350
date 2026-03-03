@@ -2,6 +2,7 @@ import sys
 import os
 import math
 import random
+import qwstpad
 
 sys.path.insert(0, "/system/apps/zoooom")
 os.chdir("/system/apps/zoooom")
@@ -51,6 +52,8 @@ level_segments_passed = 0
 start_screen = 0
 fade_counter = 255
 scroll = None
+gamepad = None
+controls={}
 
 
 # The level just stores the name and how much we want the walls to vary.
@@ -66,11 +69,50 @@ levels = [
 ]
 
 
+def init_gamepad():
+    global gamepad
+    gamepads = qwstpad.Gamepadhelper()
+    for i in gamepads.pads:
+        if i is not None:
+            gamepad = i
+            return i
+    return None
+
+
+def parse_controls():
+    global controls, gamepad
+
+    if not gamepad:
+        gamepad = init_gamepad()
+
+    if gamepad:
+        try:
+            gamepad.update_buttons()
+        except OSError:
+            gamepad = init_gamepad()
+
+    if gamepad:
+        controls["MOVE_LEFT"] = badge.held(BUTTON_A) or gamepad.held("L")
+        controls["MOVE_RIGHT"] = badge.held(BUTTON_C) or gamepad.held("R")
+        controls["MOVE_DOWN"] = badge.held(BUTTON_DOWN) or gamepad.held("D")
+        controls["MOVE_UP"] = badge.held(BUTTON_UP) or gamepad.held("U")
+        controls["BOOST"] = badge.held(BUTTON_B) or gamepad.held("B")
+        controls["ANY_KEY"] = badge.pressed() or gamepad.pressed()
+    else:
+        controls["MOVE_LEFT"] = badge.held(BUTTON_A)
+        controls["MOVE_RIGHT"] = badge.held(BUTTON_C)
+        controls["MOVE_DOWN"] = badge.held(BUTTON_DOWN)
+        controls["MOVE_UP"] = badge.held(BUTTON_UP)
+        controls["BOOST"] = badge.held(BUTTON_B)
+        controls["ANY_KEY"] = badge.pressed()
+
+
 # This resets everythiong back to its starting conditions, including loading in level textures and picking the random values for the cargo, level and distance.
 def init_game():
     global z_increment, z_offset, player, background, wall_tex, obst_tex, wall_variation, level_segments_passed, start_screen, fade_counter
     level_seed = random.randint(0, len(levels) - 1)
     current_level = levels[level_seed]
+    init_gamepad()
     background = image.load(f"assets/{current_level.texture_pack}_bg.png")
     wall_tex = SpriteSheet(f"assets/{current_level.texture_pack}_wall.png", 8, 1)
     obst_tex = SpriteSheet(f"assets/{current_level.texture_pack}_obst.png", 5, 7)
@@ -391,6 +433,8 @@ init_game()
 
 def update():
     global game_state, z_offset, z_increment, include_obstacle, level_segments_passed, start_screen, fade_counter, scroll
+
+    parse_controls()
 
     # If we're in the intro, just cycle through the intro cutscene with any button press until
     # there's no more pages of it left, then switch the game mode to gameplay.
